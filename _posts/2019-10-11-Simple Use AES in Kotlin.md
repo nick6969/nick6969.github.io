@@ -62,7 +62,7 @@ date:   2019-10-11 00:56:00 +0800
             val encrypt = cipher.doFinal(input.hexAsByteArray)
             return String(encrypt)
         }
-}
+    }
 
 ```
 
