@@ -3,10 +3,8 @@ layout: post
 title:  "在 Android 上使用 kotlin 語言, 實作 AES 加解密 是簡單的"
 date:   2019-10-11 00:56:00 +0800
 permalink: "kotlin/aes"
-tags: 
-  - "kotlin"
-  - "AES"
-  - "Cryptography" 
+tags: [ Kotlin , AES , Cryptography] 
+categories: Kotlin
 ---
 
 `Kotlin` `AES` `Cryptography`

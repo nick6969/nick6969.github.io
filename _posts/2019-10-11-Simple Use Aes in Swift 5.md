@@ -3,10 +3,8 @@ layout: post
 title:  "在 Swift 5 實作 AES 加解密 是簡單的"
 date:   2019-10-11 01:30:00 +0800
 permalink: "swift/aes"
-tags: 
-  - "Swift"
-  - "AES"
-  - "Cryptography" 
+tags: [ Swift , AES , Cryptography] 
+categories: Swift
 ---
 
 `Swift5` `Swift` `AES` `Cryptography`

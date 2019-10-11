@@ -15,3 +15,5 @@ github_username:  nick6969
 theme: minima
 plugins:
   - jekyll-feed
+
+timezone: Asia/Taipei
