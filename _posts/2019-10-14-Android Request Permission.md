@@ -72,11 +72,11 @@ App 在使用各種周邊資源時(檔案存取，藍芽，相機...)，都必�
 
     abstract class BaseActivity : AppCompatActivity() {
         
-        // 定義一個成功拿到權限的 Method
-        protected abstract fun requestGranted(requestCode: Int)
+        // 定義一個成功拿到權限的 Method，並且給空實作，需要修改的再 override
+        open fun requestGranted(requestCode: Int) { }
         
-        // 定義一個沒有拿到權限的 Method
-        protected abstract fun requestDenied(requestCode: Int)
+        // 定義一個沒有拿到權限的 Method，並且給空實作，需要修改的再 override
+        open fun requestDenied(requestCode: Int)  { }
 
         // 實作一個檢查權限的 Method
         protected fun check(permissions: ArrayList<String>, requestCode: Int) {
