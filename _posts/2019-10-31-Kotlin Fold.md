@@ -43,3 +43,18 @@ inline fun <T, R> Array<out T>.fold(
 
 <br>
 ### <span style="color:#FF0000">莫名其妙就跳坑了 囧</span>
+
+<br>
+### <span style="color:#0089A7">需要注意的是 Reduce will throw error in empty collection</span>
+```kotlin
+public inline fun <S, T : S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) 
+        throw UnsupportedOperationException("Empty collection can't be reduced.")
+    var accumulator: S = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(accumulator, iterator.next())
+    }
+    return accumulator
+}
+```
