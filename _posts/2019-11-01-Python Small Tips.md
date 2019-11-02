@@ -10,7 +10,7 @@ categories: Python
 `Python` `Python 3` `Tips`
 
 ### <span style="color:#0089A7">01. Int to Str leading zeros</span>
-[Reference Link](https://stackoverflow.com/a/733478)
+#### <a href="https://stackoverflow.com/a/733478" target="_blank">Reference Link</a>
 ```python
     no = 1234
     value = str(no).zfill(8)
@@ -19,4 +19,4 @@ categories: Python
 ```
 
 <br>
-#### 本頁面會不定時更新
+#### <span style="color:#FF00A7">This page will be updated from time to time.</span>
