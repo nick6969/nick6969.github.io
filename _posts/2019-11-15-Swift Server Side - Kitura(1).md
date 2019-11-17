@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Swift Server Side - Kitura (1)"
+title:  "Swift Server Side - Kitura (1) Install"
 date:   2019-11-15 23:10:00 +0800
 permalink: "swift/kitura_1"
 tags: [ Swift , ServerSide , Kitura, Install] 
@@ -63,3 +63,5 @@ categories: Swift
 
 #### <span style="color:#0089A7">以上就是安裝流程</span>
 #### <span style="color:#E88EB6">打完收工</span>
+<br>
+#### <a href="/swift/kitura_2" target="_blank">Swift Server Side - Kitura (2) SPM</a>
