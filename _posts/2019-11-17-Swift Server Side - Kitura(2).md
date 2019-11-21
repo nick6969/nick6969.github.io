@@ -87,3 +87,11 @@ let package = Package(
 ###### <br>
 #### <span style="color:#0089A7">以上就是安裝第三方 Framework 的流程</span>
 #### <span style="color:#E88EB6">打完收工</span>
+<br>
+
+#### 下一篇
+#### <a href="/swift/kitura_3" target="_blank">Swift Server Side - Kitura (3) Connect MySQL Server</a>
+<br>
+#### 上一篇
+#### <a href="/swift/kitura_1" target="_blank">Swift Server Side - Kitura (1) Install</a>
+<br>

@@ -64,4 +64,6 @@ categories: Swift
 #### <span style="color:#0089A7">以上就是安裝流程</span>
 #### <span style="color:#E88EB6">打完收工</span>
 <br>
+
+#### 下一篇
 #### <a href="/swift/kitura_2" target="_blank">Swift Server Side - Kitura (2) SPM</a>
