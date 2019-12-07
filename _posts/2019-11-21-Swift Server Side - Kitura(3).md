@@ -172,7 +172,9 @@ Query 的使用方式
     sudo apt-get install mysql-server libmysqlclient-dev pkg-config
 
 ```
+#### 下一篇
+#### <a href="/swift/kitura_4" target="_blank">Swift Server Side - Kitura (4) MySQL 坑</a>
 ###### <br>
 #### 上一篇
-#### <a href="/swift/kitura_3" target="_blank">Swift Server Side - Kitura (2) SPM</a>
+#### <a href="/swift/kitura_2" target="_blank">Swift Server Side - Kitura (2) SPM</a>
 <br>
