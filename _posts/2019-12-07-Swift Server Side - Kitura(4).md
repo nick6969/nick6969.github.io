@@ -29,3 +29,15 @@ MySQL Type `decimal(10, 2)` - 期待應該是 Double，但是因為沒有 Suppor
 MySQL Type `json` - 期待應該是 String，給的也是 String，但是是因為沒有 Support，所以變成為 String
 
 以上就是踩到 SwiftKueryMySQL 的坑(not all)
+
+--
+
+後記
+
+個人目前使用版本是
+
+``` swift
+
+    .package(url: "https://github.com/IBM-Swift/SwiftKueryMySQL.git", from: "2.0.1")
+    
+```
