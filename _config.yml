@@ -12,7 +12,7 @@ twitter_username: nicklin6969
 github_username:  nick6969
 
 # Build settings
-theme: jekyll-theme-leap-day
+theme: minima
 plugins:
   - jekyll-feed
 
