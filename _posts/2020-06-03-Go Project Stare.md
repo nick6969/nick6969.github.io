@@ -72,4 +72,16 @@ JWT - Json Web Token 一種 token 規範
 ```
 
 <br>
+
+Api Doc - 總是會需要出 api 文件給使用者方，半自動化產生也是節省時間
+
+```powershell
+
+  https://github.com/swaggo/swag
+
+  go get -u github.com/swaggo/swag/cmd/swag
+
+```
+
+<br>
 打完收工
