@@ -1,0 +1,3 @@
+
+run:
+	jekyll server
