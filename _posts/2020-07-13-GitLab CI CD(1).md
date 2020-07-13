@@ -7,7 +7,7 @@ tags: [GitLab, CI, CD, AWS, ECR, EKS, GCP, GCR, GKE]
 categories: Server
 ---
 
-`GitLab` `CI` `CD` `AWS` `ECR` `EKS` `GCP` `GCR` `GKE`
+`GitLab` `.gitlab-ci.yml` `CI` `CD` `AWS` `ECR` `EKS` `GCP` `GCR` `GKE`
 
 <br>
 
@@ -31,7 +31,8 @@ categories: Server
 
 所有要執行的內容，設定都放在 `.gitlab-ci.yml`
 
-`.gitlab-ci.yml` 預設需要放在 Git Repository 的根目錄位置 <a href="https://docs.gitlab.com/ee/ci/pipelines/settings.html#custom-ci-configuration-path" target="_blank">Link</a>
+`.gitlab-ci.yml` 預設需要放在 Git Repository 的根目錄位置
+<a href="https://docs.gitlab.com/ee/ci/pipelines/settings.html#custom-ci-configuration-path" target="_blank">Link</a>
 
 執行 CI/CD 內容的的機器，稱之為 Runner <a href="https://docs.gitlab.com/runner/" target="_blank">Link</a>
 
