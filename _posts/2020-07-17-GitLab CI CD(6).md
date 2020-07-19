@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "GitLab CI/CD (5) AWS Docker Build"
+title: "GitLab CI/CD (6) AWS Docker Build"
 date: 2020-07-17 10:50:00 +0800
-permalink: "GitLab/CI_CD-5"
+permalink: "GitLab/CI_CD-6"
 tags: [GitLab, CI, CD, AWS, ECR, EKS, GCP, GCR, GKE]
 categories: Server
 ---
