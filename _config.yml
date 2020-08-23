@@ -1,19 +1,19 @@
-
 # setup
 title: Nick‘s Technical Note
 email: hawhaw.ya@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
- This is Nick‘s Technical Note
+  This is Nick‘s Technical Note
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://kotlin.tw"
 
 # Social links
 twitter_username: nicklin6969
-github_username:  nick6969
+github_username: nick6969
 
 # Build settings
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
 
 timezone: Asia/Taipei
