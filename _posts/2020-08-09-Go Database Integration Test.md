@@ -83,7 +83,7 @@ mysql 8.0 image 可以用的 environment 可以在 Docker-Hub mysql page 找到 
 
 ### 2. 執行 Migration
 
-Migration 之於 Database，就像是 Source Code 之於 Git，莓果你的 Database 沒有 Migration 的版本，在這個流程中，我們就無法建立整個所需要的 Table，以及放入運作所需的基本資料
+Migration 之於 Database，就像是 Source Code 之於 Git，如果你的 Database 沒有 Migration 的版本，在這個流程中，我們就無法建立整個所需要的 Table，以及放入運作所需的基本資料
 
 個人是使用 <a href="https://github.com/golang-migrate/migrate/v4" target="_blank">migrate</a> 來操作
 

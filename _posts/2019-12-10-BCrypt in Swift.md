@@ -9,7 +9,7 @@ categories: Swift
 
 `Swift` `Bcrypt` `Cryptography`
 
-今天要介紹的是 Bcrypt, 一種加密演算法，為啥需要這個演算法，讓我們細細道來
+今天要介紹的是 Bcrypt, 一種 HASH 演算法，為啥需要這個演算法，讓我們細細道來
 
 我們都知道 Server side 不應該使用明碼儲存使用者的密碼
 
