@@ -213,7 +213,7 @@ extension CMTime {
 
 <a href="https://developer.apple.com/documentation/avfoundation/avplayer/1388493-seek" target="_">func seek(to time: CMTime, toleranceBefore: CMTime, toleranceAfter: CMTime, completionHandler: @escaping (Bool) -> Void)</a>
 
-這一個就是移動到指定的時間，但是允許誤差，toleranceBefore 跟 toleranceAfter 就是聲明往前往後的誤差
+這一個就是移動到指定的時間，但是允許誤差，toleranceBefore 跟 toleranceAfter 就是聲明往前往後的誤差，上方的 seek to time 等同於容許無限大的誤差.
 
 為什麼會有允許誤差的需求，這要從 m3u8 的檔案來說起，m3u8 指定了每個 ts 檔案的路徑，每一個 ts 檔案可能是特定的秒數，一般來說都是 10 秒
 
@@ -421,6 +421,6 @@ MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
 
 1. AVPlayer 是不支持播放本地的 m3u8 檔案的.
 
-2. 某些機型於 AVPlayer 暫停狀態 App 進入背景，App 回到前景後，再按播放，系統不會繼續幫你下載 m3u8 內網址的內容，導致無法繼續播放，解法是把整個 AVPlayer 換掉.
+2. 某些機型於 AVPlayer 暫停狀態 App 進入背景，App 回到前景後，再按播放，系統不會繼續幫你下載 m3u8 內網址的內容，導致無法繼續播放，解法是把整個 AVPlayer 換掉. 或者是 replaceCurrentItem.
 
 打完 搞定 收工
