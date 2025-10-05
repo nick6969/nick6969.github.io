@@ -11,3 +11,6 @@ run-build: # 建置生產環境
 
 run-preview: # 預覽建置結果
 	npm run preview
+
+run-deploy: # 部署到 GitHub Pages
+	npm run deploy
