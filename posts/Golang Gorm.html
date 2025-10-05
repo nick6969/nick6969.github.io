@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-site-verification" content="I1wY0q5Vjp-BbrClzbJe2Qvn1B3oGvhAwgnlqZuprEU" />
+  
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9629129343379145",
+      enable_page_level_ads: true
+    });
+  </script>
+  
+  <title>golang grom insert on duplicate 用法</title>
+  <meta name="description" content="This is Nick's Technical Note">
+  <link rel="canonical" href="https://kotlin.tw/posts/Golang Gorm.html">
+  <link rel="shortcut icon" type="image/png" href="/asset/favicon.ico">
+  
+  <link href="http://fonts.googleapis.com/css?family=Playball" rel="stylesheet">
+  <link href="/assets/css/jekyllthemes.css" rel="stylesheet" />
+  <link href="/assets/css/syntax.css" rel="stylesheet" />
+</head>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-149839884-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+<body>
+  <script data-ad-client="ca-pub-9629129343379145" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <header class="site-header">
+  <div class="container" style="text-align:center">
+    <div class="navbar" style="margin-bottom:0;border:0">
+    <ul class="navbar-nav nav header-nav">
+    <li><h2><a href="/index.html" class="button">Nick‘s Technical Note</a></h2></li>
+    </ul>
+    </div>
+  </div>
+
+</header>
+<div class="clearfix">
+
+  
+  <div class="page-content">
+    <div class="container" style="padding-left:0;padding-right:0;">
+      <div class="row">
+        <div class="col-md-1 col-xs-0"></div>
+        <div class="col-md-10 col-xs-12">
+          <article class="post post-contents" style="margin-bottom:30px;" itemscope itemtype="http://schema.org/BlogPosting">
+            </br>
+            <header class="post-header">
+              <h1 class="post-title" itemprop="name headline">golang grom insert on duplicate 用法</h1>
+              <p class="post-meta">
+                <i class="fa fa-calendar">&nbsp;&nbsp;</i><time datetime="2020-03-28T00:00:00.000Z" itemprop="datePublished">Mar 28, 2020, 08:00 AM</time>
+                
+              </p>
+            </header>
+            
+            <div class="post-content" style="margin:15px;" itemprop="articleBody">
+              <p><code>golang</code> <code>gorm</code> <code>mysql</code> <code>ON DUPLICATE KEY UPDATE</code></p>
+<p>gorm 是一個在 go 語言裡面相當受歡迎的 orm library</p>
+<p>在實際使用上，我們很常會有找得到資料更新，找不到資料就寫入資料的需求</p>
+<p>翻閱文件的時候會發現 Assign 這一段(<a href="https://gorm.io/docs/query.html#Assign-1" target="_blank">link</a>)，就是我們要的</p>
+<p>文件上面也明確得讓你知道 會下兩次 SQL Query 來解決問題</p>
+<p>可是本質上就是 Mysql 語法裡面的 <code>ON DUPLICATE KEY UPDATE</code></p>
+<p>若是想要使用ㄏ減少 <code>ON DUPLICATE KEY UPDATE</code> 來減少 Query 次數</p>
+<p>Extra Creating option 這一段(<a href="https://gorm.io/docs/create.html#Extra-Creating-option" target="_blank">link</a>)，就是我們要的</p>
+<p>文件上寫的不是很清楚(個人認為)</p>
+<p>以下用 Code 來解釋 (讓 code 自表述)</p>
+<h3>Model</h3>
+<pre><code class="language-go">
+    type TestModel struct {
+        ID        uint       `gorm:&quot;primary_key;index&quot;`
+        Name      string     `gorm:&quot;unique_index;not null;type:varchar(40)&quot;`
+        Value     string     `gorm:&quot;type:text;&quot;`
+        CreatedAt time.Time  `gorm:&quot;not null&quot;`
+        UpdatedAt time.Time  `gorm:&quot;not null&quot;`
+        DeletedAt *time.Time `gorm:&quot;index&quot;`
+    }
+
+</code></pre>
+<BR>
+<h3>使用 Assign</h3>
+<pre><code class="language-go">func FindItUpdateElseInsert(key string, value string) error {
+
+	now := time.Now()
+
+	find := TestModel{Name: key}
+	update := TestModel{Value: value, UpdatedAt: now}
+	insert := TestModel{Name: key, Value: value, CreatedAt: now, UpdatedAt: now}
+
+    return db.Where(find).Assign(update).FirstOrCreate(&amp;insert).Error
+    
+}
+</code></pre>
+<BR>
+<h3>使用 Extra Creating option</h3>
+<pre><code class="language-go">
+    func OnDuplicateUpdate(key string, value string) error {
+        now := time.Now()
+        model := TestModel{Name: key, Value: value, CreatedAt: now, UpdatedAt: now}
+        return db.Set(
+            &quot;gorm:insert_option&quot;,
+            &quot;ON DUPLICATE KEY UPDATE value = VALUES(value), updated_at = Values(updated_at)&quot;,
+        ).Create(&amp;model).Error
+    }
+
+</code></pre>
+<BR>
+<p>兩個的差別在於</p>
+<p>Assign 會下兩次 query</p>
+<p>Extra Creating option 只會下一次</p>
+<p>優劣 就端看個人怎樣取捨了</p>
+<BR>
+#### <a href="https://github.com/jinzhu/gorm" target="_blank">Gorm Github</a>
+<BR>
+打完收工
+            </div>
+          </article>
+          
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  
+  <footer style="background-color: #c9c9c9">
+    <br>
+    <div class="container">
+        <a href="https://github.com/nick6969"><span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username"> nick6969</span></a>
+
+        <br>
+        <a href="https://twitter.com/nicklin6969"><span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username"> nicklin6969</span></a>
+
+    </div>
+</footer>
+
+</body>
+</html>

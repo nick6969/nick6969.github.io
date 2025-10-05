@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-site-verification" content="I1wY0q5Vjp-BbrClzbJe2Qvn1B3oGvhAwgnlqZuprEU" />
+  
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9629129343379145",
+      enable_page_level_ads: true
+    });
+  </script>
+  
+  <title>Test-Driven Development - Go (2)</title>
+  <meta name="description" content="This is Nick's Technical Note">
+  <link rel="canonical" href="https://kotlin.tw/posts/TDD_golang(2).html">
+  <link rel="shortcut icon" type="image/png" href="/asset/favicon.ico">
+  
+  <link href="http://fonts.googleapis.com/css?family=Playball" rel="stylesheet">
+  <link href="/assets/css/jekyllthemes.css" rel="stylesheet" />
+  <link href="/assets/css/syntax.css" rel="stylesheet" />
+</head>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-149839884-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+<body>
+  <script data-ad-client="ca-pub-9629129343379145" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <header class="site-header">
+  <div class="container" style="text-align:center">
+    <div class="navbar" style="margin-bottom:0;border:0">
+    <ul class="navbar-nav nav header-nav">
+    <li><h2><a href="/index.html" class="button">Nick‘s Technical Note</a></h2></li>
+    </ul>
+    </div>
+  </div>
+
+</header>
+<div class="clearfix">
+
+  
+  <div class="page-content">
+    <div class="container" style="padding-left:0;padding-right:0;">
+      <div class="row">
+        <div class="col-md-1 col-xs-0"></div>
+        <div class="col-md-10 col-xs-12">
+          <article class="post post-contents" style="margin-bottom:30px;" itemscope itemtype="http://schema.org/BlogPosting">
+            </br>
+            <header class="post-header">
+              <h1 class="post-title" itemprop="name headline">Test-Driven Development - Go (2)</h1>
+              <p class="post-meta">
+                <i class="fa fa-calendar">&nbsp;&nbsp;</i><time datetime="2020-06-05T00:00:00.000Z" itemprop="datePublished">Jun 5, 2020, 08:00 AM</time>
+                
+              </p>
+            </header>
+            
+            <div class="post-content" style="margin:15px;" itemprop="articleBody">
+              <p><code>go</code> <code>golang</code> <code>TDD</code> <code>Test-Driven Development</code></p>
+<p>上一篇我們說明了 TDD 的基本精神跟 Flow</p>
+<p>我們找個練習案例來邊做邊說明，這樣可以更容易理解</p>
+<p>案例來源: <a href="https://codingdojo.org/kata/Potter/" target="_blank">Coding Dojo Link</a></p>
+<p>就如同你接到需求一樣 會有一開始的情境描述</p>
+<p>這邊只簡單的列出最後要給出的細節</p>
+<pre><code>
+  有五本書，每一本都是 EUR 8
+
+  買兩本不同的書，打 95折
+
+  買三本不同的書，打 9 折
+
+  買四本不同的書，打 8 折
+
+  五本都買，打 75 折
+
+  特別提醒，買了四本書，三本是不同的可以拿到 9 折，第四本還是原價 EUR 8
+
+</code></pre>
+<p>如果我們一開始就把所有 Test Case 寫上去</p>
+<p>一次寫出符合所有 Case 的 Code</p>
+<p>那就失去了 TDD 的用意了</p>
+<p>TDD 的概念讓我們每次只專注在一個 Case</p>
+<p>只要專注處理當下這一個 Case</p>
+<p>在 Repeat 整個 Flow 到所有需要都被實現後</p>
+<p>自然也保證了在這些情境下， Code 是正確無誤的</p>
+<p>也排除了 Over Design 的可能</p>
+<br>
+#### <span style="color:#FF0000">接下來就讓我們實際做一次</span>
+<p>先建立我們要用的檔案</p>
+<pre><code>
+  BookStore.go # 程式碼放置的位置
+
+  BookStore_test.go # 測試放置的位置
+
+</code></pre>
+<br>
+#### <span style="color:#FF0000">Flow 1:</span> Write Fail Test Code
+<pre><code class="language-go">
+  func TestBuyOneBook(t *testing.T) {
+
+    price := calculatePrice([]int{1}) // 還沒有這個 Function
+
+    if price != 8 {
+      t.Fatal(&quot;price should be 8, but got&quot;, price)
+    }
+
+  }
+
+</code></pre>
+<p>我們先寫了測試 測試購買一本書的時候 計算出的金額應該是 8 塊</p>
+<br>
+#### <span style="color:#FF0000">Flow 2:</span> Run Fail the Test
+<pre><code class="language-powershell">
+  # tdd
+  /golang/TDD/BookStore_test.go:7:11: undefined: calculatePrice
+  FAIL	tdd [build failed]
+  FAIL
+
+</code></pre>
+<p>當然 我們的測試這時候會是 Fail 的 因為我們還沒有寫任何跟這有關的 Code</p>
+<p>如果是 Repeat 到這一個步驟的時候，通常都會錯誤在 func 給出的 return 不符合 Test Case</p>
+<br>
+#### <span style="color:#FF0000">Flow 3:</span> Write Code to Pass
+<pre><code class="language-go">
+  func calculatePrice(books []int) float32 {
+    return 8
+  }
+
+</code></pre>
+<p>相信大家看到這裡都會有點疑惑，為啥這裡直接 return 8</p>
+<p>沒有去判斷傳進來的書本有幾本，內容有啥</p>
+<p>照著 TDD 精神，我們只需要實現符合現在的 Test Case 的 Code</p>
+<p>我們現在只有 買一本書 八塊錢的這個 Test Case</p>
+<p>所以 return 8 解決這一個 Test Case 才是符合只處理當下的 Test Case</p>
+<br>
+#### <span style="color:#FF0000">Flow 4:</span> Run Pass Test
+<pre><code class="language-powershell">
+  ok  	tdd	(cached)
+
+</code></pre>
+<p>在 Repeat 整個 Flow 的時候，實務上通常這裡都會修改很多次</p>
+<p>因為在不斷疊加的 Test Case 上，每次修改都要讓所有 Test Case 都通過</p>
+<p>是要根據你對這整個需求的理解</p>
+<p>切記，只寫符合需求 Test Code，不要為了快速，Over Design</p>
+<br>
+#### <span style="color:#FF0000">Flow 5:</span> Refactor
+<p>這一個步驟，是沒有每一次都要有</p>
+<p>是可以根據這個當下的 Code 決定需不需要做 Refactor</p>
+<p>你可以調整 Model，可以調整 function 的輸入參數等等</p>
+<p>但是，不能修改 Test Func 的判斷式(<span style="color:#FFAA00">因為這一個是唯一可以保證你沒有改壞</span>)</p>
+<p>要回到 Flow 1 之前，所有的 Test Case 都要是 pass 的</p>
+<br>
+### <span style="color:#FF0000">Repeat</span>
+<br>
+#### <span style="color:#FF0000">Flow 1:</span> Write Fail Test Code
+<p>根據需求 兩本不同的書 要打 95 折</p>
+<p>也就是說 2 * 8 * 0.95 應該是要得到 15.2</p>
+<pre><code class="language-go">
+  func TestBuyTwoDifferentBook(t *testing.T) {
+
+    price := calculatePrice([]int{1, 2})
+
+    if price != 15.2 {
+      t.Fatal(&quot;price should be 15.2, but got&quot;, price)
+    }
+
+  }
+
+</code></pre>
+<br>
+#### <span style="color:#FF0000">Flow 2:</span> Run Fail the Test
+<pre><code class="language-powershell">
+  --- FAIL: TestBuyTwoDifferentBook (0.00s)
+      BookStore_test.go:20: price should be 15.2, but got 8
+  FAIL
+  FAIL	tdd	0.474s
+  FAIL
+
+</code></pre>
+<p>如同期待，我們得到了錯誤，就要繼續下一個步驟</p>
+<br>
+#### <span style="color:#FF0000">Flow 3:</span> Write Code to Pass
+<pre><code class="language-go">
+  func calculatePrice(books []int) float32 {
+    count := len(books)
+    price := float32(count) * 8
+    if count == 2 {
+      return price * 0.95
+    }
+    return price
+  }
+
+</code></pre>
+<p>我們修改了一下 calculatePrice 這一個 func</p>
+<br>
+#### <span style="color:#FF0000">Flow 4:</span> Run Pass Test
+<pre><code class="language-powershell">
+  ok  	tdd	(cached)
+
+</code></pre>
+<p>特別提醒，這裡是要跑全部的 Test Case，不是只有這一個 Repeat 的 Test Case</p>
+<br>
+<h4>寫在最後</h4>
+<p>試著嘗試看看，把整個需求完成</p>
+<p>Coding Dojo 上面有完整的 Test Case</p>
+<p>希望你可以練習看看 一個一個 Test Case 添加上去</p>
+<p>整個完成後，停下來思考一下，這樣的開發模式完成的 Code，跟你原有的開發模式的 Code，有啥差異</p>
+<br>
+打完收工
+
+            </div>
+          </article>
+          
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  
+  <footer style="background-color: #c9c9c9">
+    <br>
+    <div class="container">
+        <a href="https://github.com/nick6969"><span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username"> nick6969</span></a>
+
+        <br>
+        <a href="https://twitter.com/nicklin6969"><span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username"> nicklin6969</span></a>
+
+    </div>
+</footer>
+
+</body>
+</html>

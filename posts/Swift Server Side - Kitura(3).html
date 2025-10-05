@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-site-verification" content="I1wY0q5Vjp-BbrClzbJe2Qvn1B3oGvhAwgnlqZuprEU" />
+  
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-9629129343379145",
+      enable_page_level_ads: true
+    });
+  </script>
+  
+  <title>Swift Server Side - Kitura (3) Connect MySQL Server</title>
+  <meta name="description" content="This is Nick's Technical Note">
+  <link rel="canonical" href="https://kotlin.tw/posts/Swift Server Side - Kitura(3).html">
+  <link rel="shortcut icon" type="image/png" href="/asset/favicon.ico">
+  
+  <link href="http://fonts.googleapis.com/css?family=Playball" rel="stylesheet">
+  <link href="/assets/css/jekyllthemes.css" rel="stylesheet" />
+  <link href="/assets/css/syntax.css" rel="stylesheet" />
+</head>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-149839884-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+<body>
+  <script data-ad-client="ca-pub-9629129343379145" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <header class="site-header">
+  <div class="container" style="text-align:center">
+    <div class="navbar" style="margin-bottom:0;border:0">
+    <ul class="navbar-nav nav header-nav">
+    <li><h2><a href="/index.html" class="button">Nick‘s Technical Note</a></h2></li>
+    </ul>
+    </div>
+  </div>
+
+</header>
+<div class="clearfix">
+
+  
+  <div class="page-content">
+    <div class="container" style="padding-left:0;padding-right:0;">
+      <div class="row">
+        <div class="col-md-1 col-xs-0"></div>
+        <div class="col-md-10 col-xs-12">
+          <article class="post post-contents" style="margin-bottom:30px;" itemscope itemtype="http://schema.org/BlogPosting">
+            </br>
+            <header class="post-header">
+              <h1 class="post-title" itemprop="name headline">Swift Server Side - Kitura (3) Connect MySQL Server</h1>
+              <p class="post-meta">
+                <i class="fa fa-calendar">&nbsp;&nbsp;</i><time datetime="2019-11-21T00:00:00.000Z" itemprop="datePublished">Nov 21, 2019, 08:00 AM</time>
+                
+              </p>
+            </header>
+            
+            <div class="post-content" style="margin:15px;" itemprop="articleBody">
+              <p><code>Swift</code> <code>Kitura</code> <code>Server Side</code> <code>IBM</code> <code>MySQL</code></p>
+<h2><span style="color:#0089A7">Kitura</span></h2>
+<br>
+#### 還沒安裝的可以前往這一篇觀看如何安裝
+#### <a href="/swift/kitura_1" target="_blank">Swift Server Side - Kitura (1) Install</a>
+<br>
+<h4>還不清楚 Swift Package Manager 如何使用的 請往這邊走</h4>
+<h4><a href="/swift/kitura_2" target="_blank">Swift Server Side - Kitura (2) SPM</a></h4>
+<br>
+<h6>----------------</h6>
+<h6><br></h6>
+<p>Kitura 本身有建立起一整個完整的 Swift Server Side 生態系 (應該說是 IBM 建立起 Kitura 完整生態系)
+<br>
+有 Connect DataBase, ORM, JWT, HttpRequest, Environment, WebSocket, SMTP 等等</p>
+<p>今天來介紹 SwiftKueryMySQL - 這是 IBM Open Source 的 MySQL Connect Framework</p>
+<h4><a href="https://github.com/IBM-Swift/SwiftKueryMySQL" target="_blank">Github Link</a></h4>
+<h6><br></h6>
+<pre><code class="language-swift">
+    // Package.swift Add 
+    .package(url: &quot;https://github.com/IBM-Swift/SwiftKueryMySQL.git&quot;, from: &quot;2.0.1&quot;),
+
+    // target's dependencies:
+    .target(name: &quot;your target&quot;, dependencies: [&quot;SwiftKueryMySQL&quot;]),
+
+</code></pre>
+<h6><br></h6>
+<p>比較特別的是，需要在機器上安裝 MySQL，因為需要 MySQL 的一些 Framework 才能運作 （開發的機器跟 Product Server 都需要)</p>
+<pre><code class="language-shell">
+    // 安裝 MySQL 當然還是用 Homebrew
+    brew install mysql
+
+</code></pre>
+<h6><br></h6>
+<p>接下來就會有另一個問題</p>
+<p>我們需要在 Xcode Project 指定 HEADER_SEARCH_PATHS 去找到 MySQL 的一些 Framework</p>
+<p>可是我們的 Xcode Project 檔案是用 SPM 產生的</p>
+<p>所以我們需要另一個檔案寫入我們要放進 Xcode Project 檔的設定</p>
+<pre><code class="language-shell">
+    // add New file Config.xcconfig
+    HEADER_SEARCH_PATHS=/usr/include/mysql
+
+</code></pre>
+<p>然後建立好的 Config 檔案來建立 Xcode Project</p>
+<pre><code class="language-shell">
+    swift package generate-xcodeproj --xcconfig-overrides Config.xcconfig
+
+</code></pre>
+<p>就可以使用 Xcode Project 繼續開發了
+<br><br>
+建立連線</p>
+<pre><code class="language-swift">
+    // 這是建立單一 Connection
+     public required init(host: String? = nil, 
+                          user: String? = nil, 
+                          password: String? = nil, 
+                          database: String? = nil, 
+                          port: Int? = nil, 
+                          unixSocket: String? = nil, 
+                          clientFlag: UInt = 0, 
+                          characterSet: String? = nil, 
+                          reconnect: Bool = true) 
+
+    // 這是建立 Connection Pool
+    public static func createPool(host: String? = nil,
+                                  user: String? = nil, 
+                                  password: String? = nil, 
+                                  database: String? = nil, 
+                                  port: Int? = nil, 
+                                  unixSocket: String? = nil, 
+                                  clientFlag: UInt = 0, 
+                                  characterSet: String? = nil, 
+                                  reconnect: Bool = true, 
+                                  connectionTimeout: Int = 0, 
+                                  poolOptions: ConnectionPoolOptions) -&gt; ConnectionPool
+
+</code></pre>
+<p>建立 Connection Pool 最重要的參數</p>
+<pre><code class="language-swift">
+    /// Options for `ConectionPool` configuration.
+    public struct ConnectionPoolOptions {
+
+        /// The initial number of connections in the pool.
+        public let initialCapacity: Int
+        
+        /// The maximum number of connections in the pool. 
+        /// The pool is allowed to grow from `initialCapacity` up to
+        /// this limit. 
+        /// If not specified, or `maxCapacity` &lt;= `initialCapacity`, the pool cannot grow.
+        public let maxCapacity: Int
+        
+        /// Initialize an instance of `ConnectionPoolOptions`.
+        ///
+        /// - Parameter initialCapacity: The initial number of connections in the pool.
+        /// - Parameter maxCapacity: The maximum number of connections in the pool
+        /// - Parameter timeout: Maximum wait (in milliseconds) to receive a connection
+        ///                      before returning nil.
+        public init(initialCapacity: Int, maxCapacity: Int = 0) {
+            self.initialCapacity = initialCapacity
+            self.maxCapacity = maxCapacity
+        }
+    }
+
+</code></pre>
+<p>Query 的使用方式</p>
+<pre><code class="language-swift">
+    func rawQuery(with pool: ConnectionPool,
+                  query: String,
+                  success: @escaping ([[String: Any?]]) -&gt; Void,
+                  failure: @escaping (Error?) -&gt; Void) {
+        pool.getConnection { connect, error in
+            guard let connect = connect else {
+                failure(error)
+                return
+            }
+            connect.execute(query, onCompletion: { result in
+                result.asRows { dics, error in
+                    if let dics = dics {
+                        success(dics)
+                    } else {
+                        failure(error)
+                    }
+                }
+            })
+        }
+    }
+
+</code></pre>
+<h6><br></h6>
+<h4><span style="color:#E88EB6">打完收工</span></h4>
+<br>
+<p>附上 Linux 上安裝 MySQL 的指令</p>
+<pre><code class="language-shell">
+    sudo apt-get update
+    sudo apt-get install mysql-server libmysqlclient-dev pkg-config
+
+</code></pre>
+<h4>下一篇</h4>
+<h4><a href="/swift/kitura_4" target="_blank">Swift Server Side - Kitura (4) MySQL 坑</a></h4>
+<h6><br></h6>
+<h4>上一篇</h4>
+<h4><a href="/swift/kitura_2" target="_blank">Swift Server Side - Kitura (2) SPM</a></h4>
+<br>
+
+            </div>
+          </article>
+          
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  
+  <footer style="background-color: #c9c9c9">
+    <br>
+    <div class="container">
+        <a href="https://github.com/nick6969"><span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username"> nick6969</span></a>
+
+        <br>
+        <a href="https://twitter.com/nicklin6969"><span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username"> nicklin6969</span></a>
+
+    </div>
+</footer>
+
+</body>
+</html>
