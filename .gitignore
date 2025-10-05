@@ -1,5 +1,12 @@
+# Jekyll (legacy)
 _site
 .sass-cache
 .jekyll-cache
 .jekyll-metadata
 vendor
+
+# Vite / Node
+node_modules
+dist
+src
+.DS_Store

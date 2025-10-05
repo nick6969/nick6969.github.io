@@ -1,0 +1,19 @@
+{
+  "name": "kotlin-tw",
+  "version": "1.0.0",
+  "description": "Nick's Technical Note",
+  "type": "module",
+  "scripts": {
+    "prebuild": "node build-posts.js",
+    "build": "node node_modules/vite/dist/node/cli.js build",
+    "dev": "npm run prebuild && node node_modules/vite/dist/node/cli.js",
+    "preview": "node node_modules/vite/dist/node/cli.js preview"
+  },
+  "devDependencies": {
+    "fast-glob": "^3.3.3",
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^14.1.0",
+    "vite": "^5.4.20",
+    "vite-plugin-static-copy": "^3.1.3"
+  }
+}
