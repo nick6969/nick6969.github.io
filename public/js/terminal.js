@@ -38,7 +38,6 @@
   function initGlitch() {
     var logo = document.querySelector('.sidebar-logo');
     if (!logo) return;
-    logo.dataset.text = logo.textContent.replace(/\n/g, '\n');
 
     setInterval(function () {
       logo.classList.add('glitch-active');
