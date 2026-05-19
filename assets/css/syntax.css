@@ -2,20 +2,20 @@
 .highlight { background: #0d0d0d; }
 
 .c   { color: #555; font-style: italic }  /* Comment */
-.err { color: #f92672 }                    /* Error */
+.err { color: #f92672; }                   /* Error */
 .k   { color: #ff9500; font-weight: bold } /* Keyword — amber */
 .o   { color: #f8f8f2 }                   /* Operator */
 .cm  { color: #555; font-style: italic }  /* Comment.Multiline */
-.cp  { color: #555 }                       /* Comment.Preproc */
+.cp  { color: #555; }                      /* Comment.Preproc */
 .c1  { color: #555; font-style: italic }  /* Comment.Single */
 .cs  { color: #555; font-style: italic }  /* Comment.Special */
 .gd  { color: #f92672 }                   /* Generic.Deleted */
-.ge  { font-style: italic }               /* Generic.Emph */
+.ge  { font-style: italic; }               /* Generic.Emph */
 .gr  { color: #f92672 }                   /* Generic.Error */
 .gh  { color: #999 }                       /* Generic.Heading */
 .gi  { color: #7ec8a0 }                   /* Generic.Inserted */
 .go  { color: #888 }                       /* Generic.Output */
-.gp  { color: var(--amber, #ff9500) }     /* Generic.Prompt */
+.gp  { color: #ff9500; }                   /* Generic.Prompt */
 .gs  { font-weight: bold }                /* Generic.Strong */
 .gu  { color: #999 }                       /* Generic.Subheading */
 .gt  { color: #f92672 }                   /* Generic.Traceback */
