@@ -202,7 +202,7 @@ function generatePostPage(post) {
   return `<!DOCTYPE html>
 <html lang="zh-TW">
 ${generateHead({
-  title: `${escapeAttr(post.title || siteTitle)} — Nick's Technical Note`,
+  title: `${post.title || siteTitle} — Nick's Technical Note`,
   description: post.excerpt || siteDescription,
   canonical: `${siteUrl}/posts/${post.slug}.html`,
   extra: adSense
