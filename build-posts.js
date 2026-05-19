@@ -35,6 +35,7 @@ function replaceJekyllVariables(content) {
 
 // Format date as YYYY.MM.DD for display in post rows
 function formatPostDate(date) {
+  if (isNaN(date.getTime())) return '';
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
@@ -78,6 +79,15 @@ function generateSidebar(activePage) {
     </aside>`;
 }
 
+// Escape special characters for use in HTML attribute values
+function escapeAttr(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 // Shared <head> block
 function generateHead({ title, description, canonical, extra = '' }) {
   return `
@@ -86,9 +96,9 @@ function generateHead({ title, description, canonical, extra = '' }) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-site-verification" content="I1wY0q5Vjp-BbrClzbJe2Qvn1B3oGvhAwgnlqZuprEU">
-    <title>${title}</title>
-    <meta name="description" content="${description}">
-    <link rel="canonical" href="${canonical}">
+    <title>${escapeAttr(title)}</title>
+    <meta name="description" content="${escapeAttr(description)}">
+    <link rel="canonical" href="${escapeAttr(canonical)}">
     <link rel="shortcut icon" type="image/png" href="/asset/favicon.ico">
     <link href="/assets/css/jekyllthemes.css" rel="stylesheet">
     <link href="/assets/css/syntax.css" rel="stylesheet">
@@ -268,7 +278,7 @@ posts.forEach(post => {
 
 // Generate index page (home page)
 const adSenseHome = fs.readFileSync('_includes/adSense.html', 'utf-8');
-const analytics_home = fs.readFileSync('_includes/analytics.html', 'utf-8'); // ADD THIS LINE
+const analyticsHome = fs.readFileSync('_includes/analytics.html', 'utf-8');
 
 const homeLayout = `<!DOCTYPE html>
 <html lang="zh-TW">
@@ -278,8 +288,8 @@ ${generateHead({
   canonical: `${siteUrl}/`,
   extra: adSenseHome
 })}
-${analytics_home}
 <body>
+  ${analyticsHome}
   <div class="mobile-header">
     <span class="mobile-logo">NICK BLOG</span>
     <nav class="mobile-nav">
@@ -299,13 +309,16 @@ ${analytics_home}
           <span class="posts-title">// POSTS.LOG</span>
           <span class="posts-count">— sorted by date desc</span>
         </div>
-        ${posts.map((post, idx) => `
+        ${posts.map((post, idx) => {
+          const tag = postTag(post);
+          return `
         <a href="/posts/${post.slug}.html" class="post-row">
           <span class="post-row-idx">${String(idx + 1).padStart(2, '0')}</span>
           <span class="post-row-title">${post.title || post.slug}</span>
-          ${postTag(post) ? `<span class="post-row-tag">${postTag(post)}</span>` : ''}
+          ${tag ? `<span class="post-row-tag">${tag}</span>` : ''}
           <span class="post-row-date">${formatPostDate(post.date)}</span>
-        </a>`).join('')}
+        </a>`;
+        }).join('')}
       </div>
       <div class="statusbar">
         <span class="statusbar-item">NORMAL</span>
