@@ -33,6 +33,69 @@ function replaceJekyllVariables(content) {
     .replace(/\{\{\s*site\.description\s*\}\}/g, siteDescription);
 }
 
+// Format date as YYYY.MM.DD for display in post rows
+function formatPostDate(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}.${m}.${d}`;
+}
+
+// Derive a short tag label from post frontmatter
+function postTag(post) {
+  if (post.categories) {
+    const cats = Array.isArray(post.categories) ? post.categories[0] : post.categories;
+    return String(cats).trim();
+  }
+  if (post.tags && post.tags.length) {
+    return Array.isArray(post.tags) ? post.tags[0] : String(post.tags).split(',')[0].trim();
+  }
+  return '';
+}
+
+// Shared sidebar HTML (activePage: 'posts' | 'about')
+function generateSidebar(activePage) {
+  const postsActive = activePage === 'posts' ? ' active' : '';
+  const aboutActive = activePage === 'about' ? ' active' : '';
+  return `
+    <aside class="sidebar">
+      <div class="sidebar-inner">
+        <div class="sidebar-logo" data-text="NICK&#10;BLOG">NICK<br>BLOG</div>
+        <div class="sidebar-version">v2.0.0 <span class="sidebar-cursor"></span></div>
+        <span class="sidebar-section-label">// navigate</span>
+        <a href="/index.html" class="sidebar-nav-item${postsActive}">posts</a>
+        <a href="/about.html" class="sidebar-nav-item${aboutActive}">about</a>
+        <hr class="sidebar-divider">
+        <span class="sidebar-section-label">// tags</span>
+        <span class="sidebar-tag">iOS</span>
+        <span class="sidebar-tag">Swift</span>
+        <span class="sidebar-tag">Kotlin</span>
+        <span class="sidebar-tag">Go</span>
+        <span class="sidebar-tag">DevOps</span>
+        <span class="sidebar-tag">K8s</span>
+        <div class="sidebar-bottom">nick@blog:~$<br><span style="color:var(--amber);opacity:0.2">█</span></div>
+      </div>
+    </aside>`;
+}
+
+// Shared <head> block
+function generateHead({ title, description, canonical, extra = '' }) {
+  return `
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="I1wY0q5Vjp-BbrClzbJe2Qvn1B3oGvhAwgnlqZuprEU">
+    <title>${title}</title>
+    <meta name="description" content="${description}">
+    <link rel="canonical" href="${canonical}">
+    <link rel="shortcut icon" type="image/png" href="/asset/favicon.ico">
+    <link href="/assets/css/jekyllthemes.css" rel="stylesheet">
+    <link href="/assets/css/syntax.css" rel="stylesheet">
+    ${extra}
+  </head>`;
+}
+
 // Helper function to process footer with Jekyll conditionals and includes
 function processFooter() {
   let footer = fs.readFileSync('_includes/footer.html', 'utf-8');
@@ -205,53 +268,59 @@ posts.forEach(post => {
 
 // Generate index page (home page)
 const adSenseHome = fs.readFileSync('_includes/adSense.html', 'utf-8');
-let headerHome = fs.readFileSync('_includes/header.html', 'utf-8');
+const analytics_home = fs.readFileSync('_includes/analytics.html', 'utf-8'); // ADD THIS LINE
 
-headerHome = headerHome.replace(/\{\{\s*site\.baseurl\s*\}\}/g, '');
-headerHome = headerHome.replace(/\{\{\s*site\.title\s*\}\}/g, siteTitle);
-
-const footerHome = processFooter();
-
-const homeLayout = `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${siteTitle}</title>
-    <meta name="description" content="${siteDescription}">
-    <link rel="canonical" href="${siteUrl}/">
-    <link href="http://fonts.googleapis.com/css?family=Playball" rel="stylesheet">
-    <link href="/assets/css/jekyllthemes.css" rel="stylesheet" />
-    <link href="/assets/css/syntax.css" rel="stylesheet" />
-  </head>
-  <body>
-    ${adSenseHome}
-    ${headerHome}
-    
-    <div class="page-content">
-      <div class="container" style="padding-left:0;padding-right:0;">
-        <div class="row">
-          <div class="col-md-1 col-xs-0"></div>
-          <div class="col-md-10 col-xs-12">
-            <div class="post-list">
-              ${posts.map(post => `
-                <article class="post-item">
-                  <h2><a href="/posts/${post.slug}.html">${post.title || post.slug}</a></h2>
-                  <p class="post-meta">${post.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
-                  ${post.excerpt ? `<p>${post.excerpt}</p>` : ''}
-                </article>
-              `).join('')}
-            </div>
-          </div>
+const homeLayout = `<!DOCTYPE html>
+<html lang="zh-TW">
+${generateHead({
+  title: siteTitle,
+  description: siteDescription,
+  canonical: `${siteUrl}/`,
+  extra: adSenseHome
+})}
+${analytics_home}
+<body>
+  <div class="mobile-header">
+    <span class="mobile-logo">NICK BLOG</span>
+    <nav class="mobile-nav">
+      <a href="/index.html" class="active">posts</a>
+      <a href="/about.html">about</a>
+    </nav>
+  </div>
+  <div class="page-shell">
+    ${generateSidebar('posts')}
+    <div class="main-content">
+      <div class="topbar">
+        <div class="topbar-path"><strong>~/posts</strong> — Nick's Technical Note</div>
+        <div class="topbar-right"><em>${posts.length}</em> entries</div>
+      </div>
+      <div class="content-area">
+        <div class="posts-header">
+          <span class="posts-title">// POSTS.LOG</span>
+          <span class="posts-count">— sorted by date desc</span>
         </div>
+        ${posts.map((post, idx) => `
+        <a href="/posts/${post.slug}.html" class="post-row">
+          <span class="post-row-idx">${String(idx + 1).padStart(2, '0')}</span>
+          <span class="post-row-title">${post.title || post.slug}</span>
+          ${postTag(post) ? `<span class="post-row-tag">${postTag(post)}</span>` : ''}
+          <span class="post-row-date">${formatPostDate(post.date)}</span>
+        </a>`).join('')}
+      </div>
+      <div class="statusbar">
+        <span class="statusbar-item">NORMAL</span>
+        <span class="statusbar-sep">│</span>
+        <span class="statusbar-item">posts/index</span>
+        <span class="statusbar-spacer"></span>
+        <span class="statusbar-item">UTF-8</span>
+        <span class="statusbar-sep">│</span>
+        <span class="statusbar-item">LF</span>
       </div>
     </div>
-    
-    ${footerHome}
-  </body>
-</html>
-`;
+  </div>
+  <script src="/js/terminal.js"></script>
+</body>
+</html>`;
 
 fs.writeFileSync('src/index.html', homeLayout);
 
