@@ -327,48 +327,52 @@ const { data: aboutData, content: aboutMarkdown } = matter(aboutContent);
 const aboutHtml = md.render(aboutMarkdown);
 
 const adSenseAbout = fs.readFileSync('_includes/adSense.html', 'utf-8');
-let headerAbout = fs.readFileSync('_includes/header.html', 'utf-8');
+const analyticsAbout = fs.readFileSync('_includes/analytics.html', 'utf-8');
 
-headerAbout = headerAbout.replace(/\{\{\s*site\.baseurl\s*\}\}/g, '');
-headerAbout = headerAbout.replace(/\{\{\s*site\.title\s*\}\}/g, siteTitle);
-
-const footerAbout = processFooter();
-
-let aboutPage = `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${aboutData.title || 'About'} - ${siteTitle}</title>
-    <meta name="description" content="${siteDescription}">
-    <link rel="canonical" href="${siteUrl}/about.html">
-    <link href="http://fonts.googleapis.com/css?family=Playball" rel="stylesheet">
-    <link href="/assets/css/jekyllthemes.css" rel="stylesheet" />
-    <link href="/assets/css/syntax.css" rel="stylesheet" />
-  </head>
-  <body>
-    ${adSenseAbout}
-    ${headerAbout}
-    
-    <div class="page-content">
-      <div class="container" style="padding-left:0;padding-right:0;">
-        <div class="row">
-          <div class="col-md-1 col-xs-0"></div>
-          <div class="col-md-10 col-xs-12">
-            <article class="post-contents">
-              <h1>${aboutData.title || 'About'}</h1>
-              ${aboutHtml}
-            </article>
-          </div>
+const aboutPage = `<!DOCTYPE html>
+<html lang="zh-TW">
+${generateHead({
+  title: `${aboutData.title || 'About'} — ${siteTitle}`,
+  description: siteDescription,
+  canonical: `${siteUrl}/about.html`,
+  extra: adSenseAbout
+})}
+<body>
+  ${analyticsAbout}
+  <div class="mobile-header">
+    <span class="mobile-logo">NICK BLOG</span>
+    <nav class="mobile-nav">
+      <a href="/index.html">posts</a>
+      <a href="/about.html" class="active">about</a>
+    </nav>
+  </div>
+  <div class="page-shell">
+    ${generateSidebar('about')}
+    <div class="main-content">
+      <div class="topbar">
+        <div class="topbar-path"><strong>~/about</strong></div>
+        <div class="topbar-right"></div>
+      </div>
+      <div class="content-area">
+        <div class="about-body">
+          <h1>${aboutData.title || 'About'}</h1>
+          ${aboutHtml}
         </div>
       </div>
+      <div class="statusbar">
+        <span class="statusbar-item">NORMAL</span>
+        <span class="statusbar-sep">│</span>
+        <span class="statusbar-item">about</span>
+        <span class="statusbar-spacer"></span>
+        <span class="statusbar-item">UTF-8</span>
+        <span class="statusbar-sep">│</span>
+        <span class="statusbar-item">LF</span>
+      </div>
     </div>
-    
-    ${footerAbout}
-  </body>
-</html>
-`;
+  </div>
+  <script src="/js/terminal.js"></script>
+</body>
+</html>`;
 
 fs.writeFileSync('src/about.html', aboutPage);
 
