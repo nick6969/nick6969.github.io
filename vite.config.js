@@ -46,6 +46,10 @@ export default defineConfig({
         {
           src: '../app-ads.txt',
           dest: '.'
+        },
+        {
+          src: '../.nojekyll',
+          dest: '.'
         }
       ]
     })
