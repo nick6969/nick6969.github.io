@@ -10,3 +10,11 @@ node_modules
 dist
 src
 .DS_Store
+
+# Brainstorm / dev tooling
+.superpowers/
+.playwright-mcp/
+homepage.png
+post-page.png
+about-page.png
+mobile-homepage.png
