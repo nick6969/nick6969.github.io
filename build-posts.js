@@ -42,6 +42,11 @@ function formatPostDate(date) {
   return `${y}.${m}.${d}`;
 }
 
+function estimateReadTime(htmlContent) {
+  const words = htmlContent.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
 // Derive a short tag label from post frontmatter
 function postTag(post) {
   if (post.categories) {
@@ -188,85 +193,64 @@ if (!fs.existsSync('src/posts')) {
 
 // Helper to generate full HTML page
 function generatePostPage(post) {
-  const dateStr = post.date.toISOString();
-  const displayDate = post.date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-  
-  // Read includes and replace Jekyll variables
+  const displayDate = formatPostDate(post.date);
+  const readTime = estimateReadTime(post.content);
+  const tag = postTag(post);
   const adSense = fs.readFileSync('_includes/adSense.html', 'utf-8');
   const analytics = fs.readFileSync('_includes/analytics.html', 'utf-8');
-  let header = fs.readFileSync('_includes/header.html', 'utf-8');
-  
-  // Replace Jekyll variables in header
-  header = header.replace(/\{\{\s*site\.baseurl\s*\}\}/g, '');
-  header = header.replace(/\{\{\s*site\.title\s*\}\}/g, siteTitle);
-  
-  // Process footer with Jekyll conditionals
-  const footer = processFooter();
-  
+
   return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="google-site-verification" content="I1wY0q5Vjp-BbrClzbJe2Qvn1B3oGvhAwgnlqZuprEU" />
-  
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-  <script>
-    (adsbygoogle = window.adsbygoogle || []).push({
-      google_ad_client: "ca-pub-9629129343379145",
-      enable_page_level_ads: true
-    });
-  </script>
-  
-  <title>${post.title || siteTitle}</title>
-  <meta name="description" content="${post.excerpt || siteDescription}">
-  <link rel="canonical" href="${siteUrl}/posts/${post.slug}.html">
-  <link rel="shortcut icon" type="image/png" href="/asset/favicon.ico">
-  
-  <link href="http://fonts.googleapis.com/css?family=Playball" rel="stylesheet">
-  <link href="/assets/css/jekyllthemes.css" rel="stylesheet" />
-  <link href="/assets/css/syntax.css" rel="stylesheet" />
-</head>
-${analytics}
+<html lang="zh-TW">
+${generateHead({
+  title: `${escapeAttr(post.title || siteTitle)} — Nick's Technical Note`,
+  description: post.excerpt || siteDescription,
+  canonical: `${siteUrl}/posts/${post.slug}.html`,
+  extra: adSense
+})}
 <body>
-  ${adSense}
-  ${header}
-  
-  <div class="page-content">
-    <div class="container" style="padding-left:0;padding-right:0;">
-      <div class="row">
-        <div class="col-md-1 col-xs-0"></div>
-        <div class="col-md-10 col-xs-12">
-          <article class="post post-contents" style="margin-bottom:30px;" itemscope itemtype="http://schema.org/BlogPosting">
-            </br>
-            <header class="post-header">
-              <h1 class="post-title" itemprop="name headline">${post.title || ''}</h1>
-              <p class="post-meta">
-                <i class="fa fa-calendar">&nbsp;&nbsp;</i><time datetime="${dateStr}" itemprop="datePublished">${displayDate}</time>
-                ${post.author ? `• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">${post.author}</span></span>` : ''}
-              </p>
-            </header>
-            
-            <div class="post-content" style="margin:15px;" itemprop="articleBody">
-              ${post.content}
-            </div>
-          </article>
-          
-          <div class="clearfix"></div>
+  ${analytics}
+  <div class="mobile-header">
+    <span class="mobile-logo">NICK BLOG</span>
+    <nav class="mobile-nav">
+      <a href="/index.html" class="active">posts</a>
+      <a href="/about.html">about</a>
+    </nav>
+  </div>
+  <div class="page-shell">
+    ${generateSidebar('posts')}
+    <div class="main-content">
+      <div class="topbar">
+        <div class="topbar-path"><strong>~/posts</strong>/${escapeAttr(post.slug)}</div>
+        <div class="topbar-right"><em>${displayDate}</em></div>
+      </div>
+      <div class="content-area">
+        <div class="post-meta-row">
+          ${tag ? `<span class="post-meta-tag">${escapeAttr(tag)}</span><span class="post-meta-sep">·</span>` : ''}
+          <span class="post-meta-date">${displayDate}</span>
+          <span class="post-meta-sep">·</span>
+          <span class="post-meta-readtime">${readTime} min read</span>
+        </div>
+        <div class="post-title-line">
+          <span class="post-title-prefix">//</span>${post.title || post.slug}
+        </div>
+        <hr class="post-divider">
+        <div class="post-body" itemprop="articleBody">
+          ${post.content}
         </div>
       </div>
+      <div class="statusbar">
+        <span class="statusbar-item">NORMAL</span>
+        <span class="statusbar-sep">│</span>
+        <span class="statusbar-item">posts/${escapeAttr(post.slug)}</span>
+        <span class="statusbar-spacer"></span>
+        ${tag ? `<span class="statusbar-item">${escapeAttr(tag)}</span><span class="statusbar-sep">│</span>` : ''}
+        <span class="statusbar-item">UTF-8</span>
+        <span class="statusbar-sep">│</span>
+        <span class="statusbar-item">LF</span>
+      </div>
     </div>
-    <div class="clearfix"></div>
   </div>
-  
-  ${footer}
+  <script src="/js/terminal.js"></script>
 </body>
 </html>`;
 }
